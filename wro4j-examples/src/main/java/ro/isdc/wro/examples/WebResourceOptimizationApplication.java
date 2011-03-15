@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 
 import ro.isdc.wro.examples.page.HomePage;
+import ro.isdc.wro.examples.page.ProcessorsPage;
 
 
 /**
@@ -42,6 +43,7 @@ public class WebResourceOptimizationApplication extends WebApplication {
     // mounts
     // mount(new IndexedHybridUrlCodingStrategy("/home", HomePage.class));
     mountPage("/home", HomePage.class);
+    mountPage("/processors", ProcessorsPage.class);
   }
 
 
