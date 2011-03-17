@@ -1,12 +1,12 @@
-package ro.isdc.wro.examples;
+package ro.isdc.wro.examples.web;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 
-import ro.isdc.wro.examples.page.HomePage;
-import ro.isdc.wro.examples.page.ProcessorsPage;
+import ro.isdc.wro.examples.web.page.HomePage;
+import ro.isdc.wro.examples.web.page.ProcessorsPage;
 
 
 /**

@@ -2,7 +2,7 @@
  * Copyright (C) 2010.
  * All rights reserved.
  */
-package ro.isdc.wro.examples;
+package ro.isdc.wro.examples.web;
 
 import java.io.FileInputStream;
 import java.io.IOException;

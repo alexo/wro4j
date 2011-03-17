@@ -1,0 +1,26 @@
+<wicket:head>
+  <script>
+  (function($) {
+	  $(function() {
+		  $("form input:submit").click(function() {
+			  var form = $(this).parents("form");
+			  var url = form.attr("action");
+			  $.post(url, form.serialize(), function(data) {
+				  $("#data").text(data);
+			  }, "text");
+			  return false;
+		  });
+	  });	  
+  })(jQuery);  
+  </script>
+</wicket:head>
+<wicket:panel>
+  <form action="api/test" method="POST">
+    <fieldset>
+      <legend>Process JsRater</legend>
+      <input type="text" name="code_url" value="http://code.jquery.com/jquery-1.5.1.js"/>
+      <input type="submit"/>
+    </fieldset>
+  </form>
+  <div id="data"></div>
+</wicket:panel>

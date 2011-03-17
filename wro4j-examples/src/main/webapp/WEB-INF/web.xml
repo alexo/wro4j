@@ -78,15 +78,15 @@
 
   <servlet>
     <servlet-name>resource.dynamic</servlet-name>
-    <servlet-class>ro.isdc.wro.examples.http.DynamicResourceServlet</servlet-class>
+    <servlet-class>ro.isdc.wro.examples.web.http.DynamicResourceServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>resource.redirect</servlet-name>
-    <servlet-class>ro.isdc.wro.examples.http.RedirectResourceServlet</servlet-class>
+    <servlet-class>ro.isdc.wro.examples.web.http.RedirectResourceServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>resource.dispatch</servlet-name>
-    <servlet-class>ro.isdc.wro.examples.http.DispatchResourceServlet</servlet-class>
+    <servlet-class>ro.isdc.wro.examples.web.http.DispatchResourceServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -104,7 +104,7 @@
 
  <servlet>
     <servlet-name>externalResource</servlet-name>
-    <servlet-class>ro.isdc.wro.examples.ExternalResourceServlet</servlet-class>
+    <servlet-class>ro.isdc.wro.examples.web.ExternalResourceServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -117,7 +117,7 @@
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
     <init-param>
       <param-name>applicationClassName</param-name>
-      <param-value>ro.isdc.wro.examples.WebResourceOptimizationApplication</param-value>
+      <param-value>ro.isdc.wro.examples.web.WebResourceOptimizationApplication</param-value>
     </init-param>
   </filter>
 
