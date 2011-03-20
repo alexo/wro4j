@@ -99,14 +99,6 @@
 			<version>${gae.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-api-1.0-runtime</artifactId>
-			<version>${gae.version}</version>
-			<scope>test</scope>
-		</dependency>
-		 -->
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-tools-sdk</artifactId>
@@ -204,7 +196,7 @@
 			<!-- <plugin> <groupId>ro.isdc.wro4j</groupId> <artifactId>wro4j-maven-plugin</artifactId> 
 				<version>1.3.5-SNAPSHOT</version> <executions> <execution> <goals> <goal>jshint</goal> 
 				</goals> </execution> </executions> <configuration> <failNever>false</failNever> 
-				</configuration> </plugin> -->
+				</configuration> </plugin> 
 			<plugin>
 				<groupId>ro.isdc.wro4j</groupId>
 				<artifactId>wro4j-maven-plugin</artifactId>
@@ -223,6 +215,7 @@
 					<targetGroups></targetGroups>
 				</configuration>
 			</plugin>
+      -->
 			<!-- -->
 		</plugins>
 	</build>

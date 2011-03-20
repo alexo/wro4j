@@ -32,9 +32,13 @@ import com.google.javascript.jscomp.CompilationLevel;
 @Service
 public class ProcessorService {
   private Map<String, ResourcePostProcessor> map = Maps.newHashMap();
+  /**
+   * Default processor name.
+   */
+  private static final String JS_MIN = "jsMin";
 
   public ProcessorService() {
-    map.put("jsMin", new JSMinProcessor());
+    map.put(JS_MIN, new JSMinProcessor());
     map.put("packerJs", new PackerJsProcessor());
     map.put("googleClosureSimple", new GoogleClosureCompressorProcessor());
     map.put("googleClosureAdvanced", new GoogleClosureCompressorProcessor(CompilationLevel.ADVANCED_OPTIMIZATIONS));
@@ -44,6 +48,7 @@ public class ProcessorService {
     map.put("yuiJsMin", YUIJsCompressorProcessor.noMungeCompressor());
     map.put("yuiJsMinAdvanced", YUIJsCompressorProcessor.doMungeCompressor());
   }
+
   /**
    * Process an external url with JsMin processor.
    *
@@ -52,7 +57,7 @@ public class ProcessorService {
    * @throws IOException if the url is not valid.
    */
   public String process(final String codeUrl) throws IOException {
-    return genericProcess(codeUrl, getProcessorByName("jsMin"));
+    return genericProcess(codeUrl, getProcessorByName(JS_MIN));
   }
 
   public String process(final String codeUrl, final String processorName) throws IOException {

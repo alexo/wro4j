@@ -23,15 +23,10 @@ import ro.isdc.wro.examples.api.service.ProcessorService;
  */
 @Controller
 @RequestMapping("/test")
-public class WroController {
-  private static final Logger LOG = LoggerFactory.getLogger(WroController.class);
+public class ProcessResource {
+  private static final Logger LOG = LoggerFactory.getLogger(ProcessResource.class);
   @Autowired
   private ProcessorService processorService;
-  @RequestMapping(method = RequestMethod.GET)
-  @ResponseBody
-  public String processSubmit() {
-    return "Hello world";
-  }
 
   @RequestMapping(method = RequestMethod.POST)
   @ResponseBody
