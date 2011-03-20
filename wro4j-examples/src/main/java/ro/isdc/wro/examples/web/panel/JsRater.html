@@ -7,7 +7,7 @@
 			  var url = form.attr("action");
 			  $.post(url, form.serialize(), function(data) {
 				  $("#data").text(data);
-			  }, "text");
+			  });
 			  return false;
 		  });
 	  });	  
@@ -15,7 +15,7 @@
   </script>
 </wicket:head>
 <wicket:panel>
-  <form action="api/process" method="POST">
+  <form action="api/processStat" method="POST">
     <fieldset>
       <legend>Process JsRater</legend>
       <input type="text" name="code_url" value="http://code.jquery.com/jquery-1.5.1.js"/>

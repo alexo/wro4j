@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,20 +23,36 @@ import ro.isdc.wro.examples.api.service.ProcessorService;
  * @author Alex Objelean
  */
 @Controller
-@RequestMapping("/test")
 public class ProcessResource {
   private static final Logger LOG = LoggerFactory.getLogger(ProcessResource.class);
   @Autowired
   private ProcessorService processorService;
 
-  @RequestMapping(method = RequestMethod.POST)
+
+  @RequestMapping(value = "/process", method = RequestMethod.POST)
   @ResponseBody
-  // js_code or code_url
-  public String process(@RequestParam(value = "code_url") final String codeUrl) throws IOException {
+  public String process(@RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
     return processorService.process(codeUrl);
   }
 
-  @ExceptionHandler(value=Throwable.class)
+
+  @RequestMapping(value = "/process/{processorName}", method = RequestMethod.POST)
+  @ResponseBody
+  public String process(@PathVariable final String processorName, @RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
+    return processorService.process(codeUrl, processorName);
+  }
+
+  @RequestMapping(value = "/processStat", method = RequestMethod.POST)
+  @ResponseBody
+  public Object processStat(@RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
+    return processorService.processStat(codeUrl);
+  }
+
+
+  @ExceptionHandler(value = Throwable.class)
   @ResponseBody
   public String handleException(final Throwable e) {
     LOG.debug("exception: " + e);

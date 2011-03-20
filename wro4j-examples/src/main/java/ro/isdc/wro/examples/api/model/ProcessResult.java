@@ -20,57 +20,57 @@ public class ProcessResult
   /**
    * Original size in bytes.
    */
-  private int originalSize;
+  private int inputSize;
   /**
    * The result of processing size.
    */
-  private int compressedSize;
+  private int outputSize;
   /**
    * Processing duration in milliseconds.
    */
-  private int processTime;
+  private long processTime;
   /**
    * Code resulted after the processing is applied.
    */
-  private String processedCode;
-
+  private String output;
+  private StatusCode statusCode;
 
   /**
    * @return the originalSize
    */
-  public int getOriginalSize() {
-    return this.originalSize;
+  public int getInputSize() {
+    return this.inputSize;
   }
 
 
   /**
-   * @param originalSize the originalSize to set
+   * @param inputSize the originalSize to set
    */
-  public void setOriginalSize(final int originalSize) {
-    this.originalSize = originalSize;
+  public void setInputSize(final int inputSize) {
+    this.inputSize = inputSize;
   }
 
 
   /**
    * @return the compressedSize
    */
-  public int getCompressedSize() {
-    return this.compressedSize;
+  public int getOutputSize() {
+    return this.outputSize;
   }
 
 
   /**
-   * @param compressedSize the compressedSize to set
+   * @param outputSize the compressedSize to set
    */
-  public void setCompressedSize(final int compressedSize) {
-    this.compressedSize = compressedSize;
+  public void setOutputSize(final int outputSize) {
+    this.outputSize = outputSize;
   }
 
 
   /**
    * @return the processTime
    */
-  public int getProcessTime() {
+  public long getProcessTime() {
     return this.processTime;
   }
 
@@ -78,7 +78,7 @@ public class ProcessResult
   /**
    * @param processTime the processTime to set
    */
-  public void setProcessTime(final int processTime) {
+  public void setProcessTime(final long processTime) {
     this.processTime = processTime;
   }
 
@@ -86,17 +86,33 @@ public class ProcessResult
   /**
    * @return the processedCode
    */
-  public String getProcessedCode() {
-    return this.processedCode;
+  public String getOutput() {
+    return this.output;
   }
 
 
   /**
-   * @param processedCode the processedCode to set
+   * @param output the processedCode to set
    */
-  public void setProcessedCode(final String processedCode) {
-    this.processedCode = processedCode;
+  public void setOutput(final String output) {
+    this.output = output;
   }
+
+  /**
+   * @return the statusCode
+   */
+  public StatusCode getStatusCode() {
+    return this.statusCode;
+  }
+
+
+  /**
+   * @param statusCode the statusCode to set
+   */
+  public void setStatusCode(final StatusCode statusCode) {
+    this.statusCode = statusCode;
+  }
+
 
   /**
    * {@inheritDoc}
