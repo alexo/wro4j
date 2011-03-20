@@ -33,7 +33,10 @@ public class ProcessResult
    * Code resulted after the processing is applied.
    */
   private String output;
-  private StatusCode statusCode;
+  /**
+   * The status of the processing. By default it is OK.
+   */
+  private StatusCode statusCode = StatusCode.OK;
 
   /**
    * @return the originalSize
@@ -119,6 +122,7 @@ public class ProcessResult
    */
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("inputSize", inputSize).append(
+      "outputSize", outputSize).append("statusCode", statusCode).append("processTime", processTime).toString();
   }
 }

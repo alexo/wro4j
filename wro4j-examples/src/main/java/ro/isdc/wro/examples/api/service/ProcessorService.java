@@ -97,24 +97,13 @@ public class ProcessorService {
     watch.stop();
     final ProcessResult result = new ProcessResult();
     result.setOutput(output);
-    result.setInputSize(input.getBytes().length);
-    result.setOutputSize(output.getBytes().length);
+    result.setInputSize(input.length());
+    result.setOutputSize(output.length());
     result.setProcessTime(watch.getLastTaskTimeMillis());
     LOG.debug("result: " + result);
     return result;
   }
 
-
-  public static void main(final String[] args) {
-    System.out.println("caca  ".length());
-    System.out.println("caca".getBytes().length);
-  }
-
-
-  /**
-   * @param processorName
-   * @return
-   */
   private ResourcePostProcessor getProcessorByName(final String processorName) {
     final ResourcePostProcessor processor = map.get(processorName);
     if (processor == null) {

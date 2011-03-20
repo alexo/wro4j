@@ -28,6 +28,19 @@ public class ProcessResource {
   @Autowired
   private ProcessorService processorService;
 
+  @RequestMapping(value = "/process", method = RequestMethod.GET)
+  @ResponseBody
+  public String processGet(@RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
+    return processorService.process(codeUrl);
+  }
+
+  @RequestMapping(value = "/process/{processorName}", method = RequestMethod.GET)
+  @ResponseBody
+  public String processGet(@PathVariable final String processorName, @RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
+    return processorService.process(codeUrl, processorName);
+  }
 
   @RequestMapping(value = "/process", method = RequestMethod.POST)
   @ResponseBody

@@ -195,7 +195,7 @@
 				<artifactId>maven-gae-plugin</artifactId>
 				<version>0.8.2</version>
 				<configuration>
-					<port>81</port>
+					<port>8080</port>
 				</configuration>
 			</plugin>
 			<!-- <plugin> <groupId>ro.isdc.wro4j</groupId> <artifactId>wro4j-maven-plugin</artifactId> 
