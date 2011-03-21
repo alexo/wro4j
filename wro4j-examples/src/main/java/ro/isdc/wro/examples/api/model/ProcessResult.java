@@ -26,17 +26,18 @@ public class ProcessResult
    */
   private int outputSize;
   /**
+   * Resource retrieving duration in milliseconds.
+   */
+  private long retrieveTime;
+  /**
    * Processing duration in milliseconds.
    */
   private long processTime;
   /**
-   * Code resulted after the processing is applied.
-   */
-  private String output;
-  /**
    * The status of the processing. By default it is OK.
    */
   private StatusCode statusCode = StatusCode.OK;
+
 
   /**
    * @return the originalSize
@@ -87,21 +88,6 @@ public class ProcessResult
 
 
   /**
-   * @return the processedCode
-   */
-  public String getOutput() {
-    return this.output;
-  }
-
-
-  /**
-   * @param output the processedCode to set
-   */
-  public void setOutput(final String output) {
-    this.output = output;
-  }
-
-  /**
    * @return the statusCode
    */
   public StatusCode getStatusCode() {
@@ -118,11 +104,26 @@ public class ProcessResult
 
 
   /**
+   * @return the retrieveTime
+   */
+  public long getRetrieveTime() {
+    return this.retrieveTime;
+  }
+
+
+  /**
+   * @param retrieveTime the retrieveTime to set
+   */
+  public void setRetrieveTime(final long retrieveTime) {
+    this.retrieveTime = retrieveTime;
+  }
+
+
+  /**
    * {@inheritDoc}
    */
   @Override
   public String toString() {
-    return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("inputSize", inputSize).append(
-      "outputSize", outputSize).append("statusCode", statusCode).append("processTime", processTime).toString();
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 }

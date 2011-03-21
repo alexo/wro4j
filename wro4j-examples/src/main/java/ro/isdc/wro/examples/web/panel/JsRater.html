@@ -1,16 +1,58 @@
 <wicket:head>
+  <script type="text/javascript" src="http://twigkit.github.com/tempo/tempo.js"></script>
+  <script type="text/javascript" src="https://github.com/jquery/jquery-tmpl/raw/master/jquery.tmpl.js"></script>
+  
   <script>
   (function($) {
 	  $(function() {
-		  $("form input:submit").click(function() {
-			  var form = $(this).parents("form");
-			  var url = form.attr("action");
-			  $.post(url, form.serialize(), function(data) {
-				  $("#data").text(data);
-			  });
-			  return false;
-		  });
-	  });	  
+		  f2();
+	  });
+	  function handleProcessor(name, parent) {
+		  console.log(name);
+		  var url = "api/processStat/" + name;
+		  var form = $("form");
+		  var element = $("<li>Loading...</li>");
+		  element.appendTo(parent);
+		  $.post(url, form.serialize(), function(data) {
+			  console.log(data.outputSize);
+			  // A template string
+			  var tmpl = "<li>" + name + ": ${outputSize}</li>";
+			  // Renders one LI, filled with data, then appends it into the UL
+			  element.replaceWith($.tmpl( tmpl, data ));
+      });
+	  }
+	  function start() {
+		  var parent = $("#jsRates");
+	    $.get("api/supportedProcessors").success(function(data) {
+	    	if ($.isArray(data)) {
+	    		parent.html("");
+	    		$.each(data, function(i, value) {
+	    			handleProcessor(value, parent);
+	    		});	
+	    	} else {
+	    		alert("Unexpected type returned by SupportedProcessors");	
+	    	}
+      }).error(function() {
+        alert("error while retrieving supported processors");
+      });
+	  }
+	  function f2() {
+	    var html = $("#data").html();
+      $("form input:submit").click(function() {
+    	  start();
+    	  /*
+        var form = $(this).parents("form");
+        var url = form.attr("action");
+        $("#data").html("Loading...");
+        $.post(url, form.serialize(), function(data) {
+          $("#data").html(html);
+          Tempo.prepare("data").render(data);
+          //$("#data").html(html);
+        });
+        */
+        return false;
+      });		  
+	  }
   })(jQuery);  
   </script>
 </wicket:head>
@@ -18,9 +60,29 @@
   <form action="api/processStat" method="POST">
     <fieldset>
       <legend>Process JsRater</legend>
-      <input type="text" name="code_url" value="http://code.jquery.com/jquery-1.5.1.js"/>
+      <!-- 
+      http://static.jquery.com/files/rocker/scripts/custom.js
+      http://code.jquery.com/jquery-1.5.1.js
+       -->
+      <input type="text" name="code_url" size="40" value="http://static.jquery.com/files/rocker/scripts/custom.js"/>
       <input type="submit"/>
     </fieldset>
   </form>
-  <div id="data"></div>
+  
+  <ul id="jsRates">
+  </ul>
+
+  <div id="template">
+    
+  </div>
+  
+  <div id="data">
+	  <ul data-template style="display:none;">
+	    <li>Status: {{statusCode}}</li>
+	    <li>Input size: {{inputSize}} bytes</li>
+	    <li>Output size: {{outputSize}} bytes</li>
+	    <li>Retrieve time: {{retrieveTime}} ms</li>
+	    <li>Process time: {{processTime}} ms</li>
+	  </ul>
+	</div>
 </wicket:panel>

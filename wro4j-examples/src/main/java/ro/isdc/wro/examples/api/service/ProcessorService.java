@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -60,6 +61,14 @@ public class ProcessorService {
 
 
   /**
+   * @return a collection of supported processors.
+   */
+  public Collection<String> supportedProcessors() {
+    return map.keySet();
+  }
+
+
+  /**
    * Process an external url with JsMin processor.
    *
    * @param codeUrl the external url of the resource.
@@ -87,22 +96,40 @@ public class ProcessorService {
 
   public ProcessResult processStat(final String codeUrl)
     throws IOException {
-    LOG.debug("processStat: " + codeUrl);
-    final StopWatch watch = new StopWatch();
-    watch.start("processInfo: " + codeUrl);
+    return createStat(codeUrl, getProcessorByName(JS_MIN));
+  }
 
-    final String input = getResourceContent(codeUrl);
-    final String output = processCode(input, getProcessorByName(JS_MIN));
 
-    watch.stop();
+  public ProcessResult processStat(final String codeUrl, final String processorName)
+    throws IOException {
+    LOG.debug("codeUrl: " + codeUrl);
+    LOG.debug("processorName: " + processorName);
+    return createStat(codeUrl, getProcessorByName(processorName));
+  }
+
+  private ProcessResult createStat(final String codeUrl, final ResourcePostProcessor processor)
+    throws IOException {
+    LOG.debug("processStat: " + codeUrl + " processor: " + processor.getClass());
     final ProcessResult result = new ProcessResult();
-    result.setOutput(output);
+    final StopWatch watch = new StopWatch();
+
+    watch.start("retrieve");
+    final String input = getResourceContent(codeUrl);
+    watch.stop();
+
+    result.setRetrieveTime(watch.getLastTaskTimeMillis());
+
+    watch.start("processInfo: " + codeUrl);
+    final String output = processCode(input, processor);
+    watch.stop();
+
     result.setInputSize(input.length());
     result.setOutputSize(output.length());
     result.setProcessTime(watch.getLastTaskTimeMillis());
     LOG.debug("result: " + result);
     return result;
   }
+
 
   private ResourcePostProcessor getProcessorByName(final String processorName) {
     final ResourcePostProcessor processor = map.get(processorName);

@@ -64,6 +64,19 @@ public class ProcessResource {
     return processorService.processStat(codeUrl);
   }
 
+  @RequestMapping(value = "/processStat/{processorName}", method = RequestMethod.POST)
+  @ResponseBody
+  public Object processStatForProcessor(@PathVariable final String processorName, @RequestParam(value = "code_url") final String codeUrl)
+    throws IOException {
+    return processorService.processStat(codeUrl, processorName);
+  }
+
+  @RequestMapping(value = "/supportedProcessors", method = RequestMethod.GET)
+  @ResponseBody
+  public Object supportedProcessors() {
+    return processorService.supportedProcessors();
+  }
+
 
   @ExceptionHandler(value = Throwable.class)
   @ResponseBody
