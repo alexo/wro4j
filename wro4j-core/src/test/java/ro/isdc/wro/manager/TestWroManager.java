@@ -237,7 +237,7 @@ public class TestWroManager
   private XmlModelFactory getValidModelFactory() {
     return new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream() {
+      public InputStream getConfigResourceAsStream() {
         return TestWroManager.class.getResourceAsStream("wro.xml");
       }
     };

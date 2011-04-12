@@ -48,7 +48,7 @@ public class TestXmlModelFactory {
   public void recursiveGroupThrowsException() {
     factory = new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream() {
+      public InputStream getConfigResourceAsStream() {
         return Thread.currentThread().getContextClassLoader()
             .getResourceAsStream("recursive.xml");
       }
@@ -81,7 +81,7 @@ public class TestXmlModelFactory {
   public void testSuccessfulCreation() {
     factory = new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream() {
+      public InputStream getConfigResourceAsStream() {
         return Thread.currentThread()
           .getContextClassLoader()
           .getResourceAsStream("wro1.xml");
@@ -97,7 +97,7 @@ public class TestXmlModelFactory {
   public void testMinimizeAttributePresence() {
     factory = new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream() {
+      public InputStream getConfigResourceAsStream() {
         //get a class relative test resource
         return TestXmlModelFactory.class.getResourceAsStream("wro-minimizeAttribute.xml");
       }

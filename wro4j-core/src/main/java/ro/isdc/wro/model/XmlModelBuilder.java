@@ -31,6 +31,18 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
   /** Default xml to parse. */
   private static final String XML_SCHEMA_FILE = "ro/isdc/wro/wro.xsd";
 
+  /** Group tag used in xml. */
+  public static final String TAG_GROUP = "group";
+
+  /** Group name attribute used in xml. */
+  public static final String ATTR_GROUP_NAME = "name";
+
+  /**
+   * Minimize attribute specified on resource level, used to turn on/off
+   * minimization on this particular resource during pre processing.
+   */
+  public static final String ATTR_MINIMIZE = "minimize";
+
   /** Document containing all group and resource definitions. */
   private Document modelDocument;
 
@@ -48,6 +60,8 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
    */
   @Override
   public Document build() {
+    setModified(false);
+
     return getDocument();
   }
 
@@ -148,8 +162,8 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
   }
 
   private Element createGroupEl(final Document document, final Group group) {
-    Element element = document.createElement("group");
-    element.setAttribute("name", group.getName());
+    Element element = document.createElement(TAG_GROUP);
+    element.setAttribute(ATTR_GROUP_NAME, group.getName());
 
     for (Resource resource : group.getResources()) {
       element.appendChild(createResourceEl(document, resource));
@@ -165,7 +179,7 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
         .toLowerCase());
 
     element.setTextContent(resource.getUri());
-    element.setAttribute("minimize", String.valueOf(resource.isMinimize()));
+    element.setAttribute(ATTR_MINIMIZE, String.valueOf(resource.isMinimize()));
 
     return element;
   }

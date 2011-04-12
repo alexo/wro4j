@@ -17,10 +17,10 @@ import ro.isdc.wro.config.Context;
  */
 public final class ServletContextAwareXmlModelFactory extends FallbackAwareXmlModelFactory {
   /**
-   * This {@inheritDoc}
+   * {@inheritDoc}
    */
   @Override
-  protected InputStream getConfigResourceAsStream() {
+  public InputStream getConfigResourceAsStream() {
     return Context.get().getServletContext().getResourceAsStream(
         "/WEB-INF/" + XML_CONFIG_FILE);
   }
