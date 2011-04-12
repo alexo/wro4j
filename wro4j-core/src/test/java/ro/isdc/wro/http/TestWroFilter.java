@@ -73,7 +73,7 @@ public class TestWroFilter {
           protected WroModelFactory newModelFactory(final ServletContext servletContext) {
             return new XmlModelFactory() {
               @Override
-              protected InputStream getConfigResourceAsStream() {
+              public InputStream getConfigResourceAsStream() {
                 return getClass().getResourceAsStream("wro.xml");
               }
             };

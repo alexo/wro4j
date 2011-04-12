@@ -28,7 +28,7 @@ public class ExternalModelConfigurableWroManagerFactory
   protected WroModelFactory newModelFactory(final ServletContext servletContext) {
     return new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream()
+      public InputStream getConfigResourceAsStream()
         throws IOException {
         return new FileInputStream("D:\\temp\\____wro\\wro.xml");
       }
