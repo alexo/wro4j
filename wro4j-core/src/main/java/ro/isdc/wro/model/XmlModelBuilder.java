@@ -22,6 +22,7 @@ import ro.isdc.wro.model.group.Group;
 import ro.isdc.wro.model.resource.Resource;
 
 /**
+ * Builds the model from the WRO XML configuration file.
  *
  * @author Matias Mirabelli &lt;matias.mirabelli@globant.com&gt;
  * @since 1.3.7
@@ -161,6 +162,14 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
     return schema;
   }
 
+  /**
+   * Creates an {@link Element} that represents the specified group.
+   *
+   * @param document Document that holds this model. It cannot be null.
+   * @param group Source group. Cannot be null.
+   *
+   * @return Element that represents the group.
+   */
   private Element createGroupEl(final Document document, final Group group) {
     Element element = document.createElement(TAG_GROUP);
     element.setAttribute(ATTR_GROUP_NAME, group.getName());
@@ -172,6 +181,14 @@ public class XmlModelBuilder extends ChangeAwareModelBuilder<Document> {
     return element;
   }
 
+  /**
+   * Creates an {@link Element} that represents the specified resource.
+   *
+   * @param document Document that holds this model. It cannot be null.
+   * @param resource Resource from which the element will be created. Cannot
+   *    be null.
+   * @return An Element representing the resource.
+   */
   private Element createResourceEl(final Document document,
       final Resource resource) {
 

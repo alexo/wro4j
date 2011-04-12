@@ -13,6 +13,7 @@ import ro.isdc.wro.model.factory.WroModelFactory;
 import ro.isdc.wro.model.group.Group;
 
 /**
+ * This class allows to build WRO models using different representations.
  *
  * @author Matias Mirabelli &lt;matias.mirabelli@globant.com&gt;
  * @since 1.3.7

@@ -4,6 +4,20 @@ import ro.isdc.wro.model.factory.WroModelFactory;
 import ro.isdc.wro.model.group.Group;
 
 /**
+ * This builder notifies to the related {@link WroModelFactory} when any change
+ * is made to the model.
+ * <p>
+ * This supports both automatic and manual notifications. When automatic
+ * notifications are enabled, every time a new change is introduced to the
+ * model that will be notified to the factory. On the other hand if manual
+ * notifications are enabled, the factory will be notified only via
+ * {@link #notifyChanges()}.
+ * </p>
+ * <p>
+ * {@link WroModelFactory} is notified using
+ * {@link WroModelFactory#onModelChanged()} event. Once notified modifications
+ * will be permanent and {@link #isModified()} will return <code>false</code>.
+ * </P>
  *
  * @author Matias Mirabelli &lt;matias.mirabelli@globant.com&gt;
  * @since 1.3.7
