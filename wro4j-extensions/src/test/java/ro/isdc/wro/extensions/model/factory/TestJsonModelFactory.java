@@ -34,7 +34,7 @@ public class TestJsonModelFactory {
   public void testInvalidStream() throws Exception {
     factory = new JsonModelFactory() {
       @Override
-      protected InputStream getWroModelStream()
+      public InputStream getConfigResourceAsStream()
         throws IOException {
         throw new IOException();
       };
@@ -46,7 +46,7 @@ public class TestJsonModelFactory {
   public void testInvalidContent() {
     factory = new JsonModelFactory() {
       @Override
-      protected InputStream getWroModelStream() throws IOException {
+      public InputStream getConfigResourceAsStream() throws IOException {
         return new ByteArrayInputStream("".getBytes());
       };
     };
@@ -71,7 +71,7 @@ public class TestJsonModelFactory {
   public void createIncompleteModel() {
     factory = new JsonModelFactory() {
       @Override
-      protected InputStream getWroModelStream() throws IOException {
+      public InputStream getConfigResourceAsStream() throws IOException {
         return getClass().getResourceAsStream("incomplete-wro.json");
       };
     };

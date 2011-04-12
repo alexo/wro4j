@@ -38,7 +38,7 @@ public class TestFallbackAwareWroModelFactory {
     Context.set(Context.standaloneContext());
     fallbackAwareModelFactory = new ScheduledWroModelFactory(new FallbackAwareWroModelFactory(new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream()
+      public InputStream getConfigResourceAsStream()
         throws IOException {
         flag = !flag;
         if (flag) {
@@ -49,7 +49,7 @@ public class TestFallbackAwareWroModelFactory {
     }));
     xmlModelFactory = new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream()
+      public InputStream getConfigResourceAsStream()
         throws IOException {
         if (flag) {
           return super.getConfigResourceAsStream();

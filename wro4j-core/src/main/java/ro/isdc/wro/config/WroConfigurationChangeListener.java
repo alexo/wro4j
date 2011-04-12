@@ -12,12 +12,12 @@ import ro.isdc.wro.config.jmx.WroConfiguration;
  * @author Alex Objelean
  */
 public interface WroConfigurationChangeListener {
-	/**
-	 * Invoked when the cachePeriod property is changed.
-	 */
-	void onCachePeriodChanged();
-	/**
-	 * Invoked when the modelPeriod property is changed.
-	 */
-	void onModelPeriodChanged();
+  /**
+   * Invoked when the cachePeriod property is changed.
+   */
+  void onCachePeriodChanged();
+  /**
+   * Invoked when the modelPeriod property is changed.
+   */
+  void onModelPeriodChanged();
 }

@@ -3,6 +3,9 @@
  */
 package ro.isdc.wro.model.factory;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import ro.isdc.wro.model.WroModel;
 
 
@@ -35,5 +38,19 @@ public class WroModelFactoryDecorator
    */
   public void destroy() {
     decorated.destroy();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void onModelChanged() {
+    decorated.onModelChanged();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public InputStream getConfigResourceAsStream() throws IOException {
+    return decorated.getConfigResourceAsStream();
   }
 }

@@ -13,16 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +20,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import ro.isdc.wro.WroRuntimeException;
+
+import ro.isdc.wro.config.Context;
+import ro.isdc.wro.model.ModelBuilder;
+
 import ro.isdc.wro.model.WroModel;
+import ro.isdc.wro.model.XmlModelBuilder;
 import ro.isdc.wro.model.group.Group;
 import ro.isdc.wro.model.group.RecursiveGroupDefinitionException;
 import ro.isdc.wro.model.resource.Resource;
@@ -64,18 +58,10 @@ public class XmlModelFactory
   protected static final String XML_CONFIG_FILE = "wro.xml";
 
   /**
-   * Default xml to parse.
-   */
-  private static final String XML_SCHEMA_FILE = "ro/isdc/wro/wro.xsd";
-
-  /**
-   * Group tag used in xml.
-   */
-  private static final String TAG_GROUP = "group";
-  /**
    * Import tag used in xml.
    */
   private static final String TAG_IMPORT = "import";
+
   /**
    * CSS tag used in xml.
    */
@@ -92,24 +78,14 @@ public class XmlModelFactory
   private static final String TAG_GROUP_REF = "group-ref";
 
   /**
-   * Group name attribute used in xml.
-   */
-  private static final String ATTR_GROUP_NAME = "name";
-  /**
-   * Minimize attribute specified on resource level, used to turn on/off minimization on this particular resource during
-   * pre processing.
-   */
-  private static final String ATTR_MINIMIZE = "minimize";
-
-  /**
-   * Map between the group name and corresponding element. Hold the map<GroupName, Element> of all group nodes to access
-   * any element.
+   * Map between the group name and corresponding element. Hold the
+   * map<GroupName, Element> of all group nodes to access any element.
    */
   final Map<String, Element> allGroupElements = new HashMap<String, Element>();
 
   /**
-   * List of groups which are currently processing and are partially parsed. This list is useful in order to catch
-   * infinite recurse group reference.
+   * List of groups which are currently processing and are partially parsed.
+   * This list is useful in order to catch infinite recurse group reference.
    */
   final Collection<String> processingGroups = new HashSet<String>();
 
@@ -117,78 +93,63 @@ public class XmlModelFactory
    * Used to locate imports;
    */
   private SimpleUriLocatorFactory uriLocatorFactory;
+
   /**
    * Used to detect recursive import processing.
    */
   private Set<String> processedImports = new HashSet<String>();
 
+  /** Model builder used to read configuration from the XML model file. */
+  private ModelBuilder<? extends Document> modelBuilder;
 
   /**
    * {@inheritDoc}
    */
   public WroModel getInstance() {
-    Document document = null;
-    try {
-      final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      factory.setNamespaceAware(true);
-      final InputStream configResource = getConfigResourceAsStream();
-      if (configResource == null) {
-        throw new WroRuntimeException("Could not locate config resource (wro.xml)!");
-      }
-      document = factory.newDocumentBuilder().parse(configResource);
-      validate(document);
-      document.getDocumentElement().normalize();
-    } catch (final IOException e) {
-      throw new WroRuntimeException("Cannot find XML to parse", e);
-    } catch (final SAXException e) {
-      throw new WroRuntimeException("The wro configuration file contains errors: " + e.getMessage());
-    } catch (final ParserConfigurationException e) {
-      throw new WroRuntimeException("Parsing error", e);
+    if (modelBuilder == null) {
+      modelBuilder = newModelBuilder();
     }
+
+    // TODO return a single instance based on some configuration?
+    Document document = modelBuilder.build();
+
     processGroups(document);
     // TODO cache model based on application Mode (DEPLOYMENT, DEVELOPMENT)
     final WroModel model = createModel();
     processImports(document, model);
     processedImports.clear();
+
     return model;
   }
 
-
   /**
-   * @return Schema
+   * {@inheritDoc}
    */
-  private Schema getSchema()
-    throws IOException, SAXException {
-    // create a SchemaFactory capable of understanding WXS schemas
-    final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-    final Source schemaFile = new StreamSource(getResourceAsStream(XML_SCHEMA_FILE));
-    final Schema schema = factory.newSchema(schemaFile);
-    return schema;
-  }
-
-
-  /**
-   * Override this method, in order to provide different xml definition file name.
-   *
-   * @return stream of the xml representation of the model.
-   * @throws IOException if the stream couldn't be read.
-   */
-  protected InputStream getConfigResourceAsStream()
-    throws IOException {
+  public InputStream getConfigResourceAsStream() throws IOException {
     return getResourceAsStream(XML_CONFIG_FILE);
   }
 
+  /**
+   * Creates a new {@link ModelBuilder} used to read model groups and
+   * resources.
+   *
+   * @return A new {@link ModelBuilder} bound to this model factory.
+   */
+  protected ModelBuilder<? extends Document> newModelBuilder() {
+    return new XmlModelBuilder(this);
+  }
 
   /**
    * Initialize the map
    */
   private void processGroups(final Document document) {
     // handle imports
-    final NodeList groupNodeList = document.getElementsByTagName(TAG_GROUP);
+    final NodeList groupNodeList = document.getElementsByTagName(
+        XmlModelBuilder.TAG_GROUP);
     for (int i = 0; i < groupNodeList.getLength(); i++) {
       final Element groupElement = (Element)groupNodeList.item(i);
-      final String name = groupElement.getAttribute(ATTR_GROUP_NAME);
+      final String name = groupElement.getAttribute(
+          XmlModelBuilder.ATTR_GROUP_NAME);
       allGroupElements.put(name, groupElement);
     }
   }
@@ -203,7 +164,7 @@ public class XmlModelFactory
       LOG.debug("processing import: " + name);
       final XmlModelFactory importedModelFactory = new XmlModelFactory() {
         @Override
-        protected InputStream getConfigResourceAsStream()
+        public InputStream getConfigResourceAsStream()
           throws IOException {
           LOG.debug("build model from import: " + name);
           return getUriLocatorFactory().locate(name);
@@ -249,7 +210,7 @@ public class XmlModelFactory
    * @return list of resources associated with this resource
    */
   private Collection<Resource> parseGroup(final Element element, final Collection<Group> groups) {
-    final String name = element.getAttribute(ATTR_GROUP_NAME);
+    final String name = element.getAttribute(XmlModelBuilder.ATTR_GROUP_NAME);
     if (processingGroups.contains(name)) {
       throw new RecursiveGroupDefinitionException("Infinite Recursion detected for the group: " + name
         + ". Recursion path: " + processingGroups);
@@ -326,10 +287,11 @@ public class XmlModelFactory
       throw new WroRuntimeException("Usupported resource type: " + tagName);
     }
     if (type != null) {
-      final String minimizeAsString = resourceElement.getAttribute(ATTR_MINIMIZE);
-      final boolean minimize = StringUtils.isEmpty(minimizeAsString)
-        ? true
-        : Boolean.valueOf(resourceElement.getAttribute(ATTR_MINIMIZE));
+      final String minimizeAsString = resourceElement
+          .getAttribute(XmlModelBuilder.ATTR_MINIMIZE);
+      final boolean minimize = StringUtils.isEmpty(minimizeAsString) ? true :
+          Boolean.valueOf(resourceElement
+              .getAttribute(XmlModelBuilder.ATTR_MINIMIZE));
       final Resource resource = Resource.create(uri, type);
       resource.setMinimize(minimize);
       resources.add(resource);
@@ -344,28 +306,11 @@ public class XmlModelFactory
     return Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
   }
 
-
-  /**
-   * Checks if xml structure is valid.
-   *
-   * @param document xml document to validate.
-   */
-  private void validate(final Document document)
-    throws IOException, SAXException {
-    final Schema schema = getSchema();
-    // create a Validator instance, which can be used to validate an instance
-    // document
-    final Validator validator = schema.newValidator();
-    // validate the DOM tree
-    validator.validate(new DOMSource(document));
-  }
-
-
   /**
    * {@inheritDoc}
    */
-  public void destroy() {}
-
+  public void onCachePeriodChanged() {
+  }
 
   /**
    * @return lazily instantiated {@link UriLocatorFactory}.
@@ -387,6 +332,20 @@ public class XmlModelFactory
         }
       });
     }
+
     return uriLocatorFactory;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void destroy() {}
+
+  /**
+   * {@inheritDoc}
+   */
+  public void onModelChanged() {
+    Context.get().getConfig().reloadModel();
+    Context.get().getConfig().reloadCache();
   }
 }

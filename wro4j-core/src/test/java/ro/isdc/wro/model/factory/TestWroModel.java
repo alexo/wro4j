@@ -68,7 +68,7 @@ public class TestWroModel {
   private WroModel buildValidModel() {
     factory = new XmlModelFactory() {
       @Override
-      protected InputStream getConfigResourceAsStream() {
+      public InputStream getConfigResourceAsStream() {
         return getClass().getResourceAsStream("wro.xml");
       }
     };
