@@ -1,7 +1,7 @@
 /**
  * Copyright Alex Objelean
  */
-package ro.isdc.wro.examples;
+package ro.isdc.wro.examples.web;
 
 import java.io.IOException;
 

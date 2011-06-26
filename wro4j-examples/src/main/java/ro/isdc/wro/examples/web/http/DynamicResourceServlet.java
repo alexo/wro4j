@@ -1,7 +1,7 @@
 /**
  * Copyright Alex Objelean
  */
-package ro.isdc.wro.examples.http;
+package ro.isdc.wro.examples.web.http;
 
 import java.io.IOException;
 import java.text.DateFormat;

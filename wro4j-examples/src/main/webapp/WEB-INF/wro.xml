@@ -31,6 +31,7 @@
   
   <group name="all">
     <group-ref>jquery</group-ref>
+    <group-ref>jquery-mobile</group-ref>    
     <!-- 
     <group-ref>twitterBar</group-ref> 
     <group-ref>dynamicResource</group-ref>
@@ -95,9 +96,7 @@
   </group>
 
   <group name="jquery">
-    <!--<js>http://code.jquery.com/jquery-1.4.3.js</js>--> 
-    <js>http://code.jquery.com/jquery-1.5.js</js>
-    <group-ref>jquery-mobile</group-ref>
+    <js>http://code.jquery.com/jquery-1.5.1.js</js>
   </group>
   
   <group name="jquery-mobile">

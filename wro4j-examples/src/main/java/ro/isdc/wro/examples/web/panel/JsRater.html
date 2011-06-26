@@ -1,0 +1,172 @@
+<wicket:head>
+  <script type="text/javascript" src="http://twigkit.github.com/tempo/tempo.js"></script>
+  <script type="text/javascript" src="https://github.com/jquery/jquery-tmpl/raw/master/jquery.tmpl.js"></script>
+  
+  <script type="text/javascript" src="http://www.highcharts.com/js/highcharts.js"></script>
+  <script type="text/javascript" src="http://www.highcharts.com/js/themes/gray.js"></script>
+  
+  
+  <script>
+  (function($) {
+	  $(function() {
+		  f2();
+	  });
+	  $(document).ready(function() {
+		   var index = 1;
+	     new Highcharts.Chart({
+	         chart: {
+	             renderTo: 'chart-container',
+	             defaultSeriesType: 'bar',
+	             events: {
+	                 load: function() {
+	        
+	                    // set up the updating of the chart each second
+	                    var series = this.series[0];
+	                    /*
+	                    setInterval(function() {
+	                    	var data = []; 
+	                    	for (var i = 0; i < index; i++) {
+	                    		 data.push(Math.random() * 100); 
+	                    	 }
+	                    	 index++;
+	                    	 series.setData(data, true);
+	                    }, 3000);
+	                    */
+	                 }
+	             }
+	          },
+	          title: {
+	              text: 'Historic World Population by Region'
+	           },
+	           subtitle: {
+	              text: 'Source: Wikipedia.org'
+	           },
+	           xAxis: {
+	              categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+	              title: {
+	                 text: null
+	              }
+	           },
+	           yAxis: {
+	              min: 0,
+	              title: {
+	                 text: 'Population (millions)',
+	                 align: 'high'
+	              }
+	           },
+	           tooltip: {
+	              formatter: function() {
+	                 return ''+
+	                     this.series.name +': '+ this.y +' millions';
+	              }
+	           },
+	           plotOptions: {
+	              bar: {
+	                 dataLabels: {
+	                    enabled: true
+	                 }
+	              },
+		            series: {
+		               stacking: 'normal'
+		            }
+	           },
+	           legend: {
+	              layout: 'vertical',
+	              align: 'right',
+	              verticalAlign: 'top',
+	              x: -100,
+	              y: 100,
+	              floating: true,
+	              borderWidth: 1,
+	              backgroundColor: Highcharts.theme.legendBackgroundColor || '#FFFFFF',
+	              shadow: true
+	           },
+	           credits: {
+	              enabled: false
+	           },
+	           series: [{
+	              name: 'Year 1800',
+	              data: [107]
+	           }]
+	       });
+	  });
+	  function handleProcessor(name, parent) {
+		  console.log(name);
+		  var url = "api/processStat/" + name;
+		  var form = $("form");
+		  var element = $("<li>Loading...</li>");
+		  element.appendTo(parent);
+		  $.post(url, form.serialize(), function(data) {
+			  console.log(data.outputSize);
+			  // A template string
+			  var tmpl = "<li>" + name + ": ${outputSize}</li>";
+			  // Renders one LI, filled with data, then appends it into the UL
+			  element.replaceWith($.tmpl( tmpl, data ));
+      });
+	  }
+	  function start() {
+		  var parent = $("#jsRates");
+	    $.get("api/supportedProcessors").success(function(data) {
+	    	if ($.isArray(data)) {
+	    		parent.html("");
+	    		$.each(data, function(i, value) {
+	    			handleProcessor(value, parent);
+	    		});	
+	    	} else {
+	    		alert("Unexpected type returned by SupportedProcessors");	
+	    	}
+      }).error(function() {
+        alert("error while retrieving supported processors");
+      });
+	  }
+	  function f2() {
+	    var html = $("#data").html();
+      $("form input:submit").click(function() {
+    	  start();
+    	  /*
+        var form = $(this).parents("form");
+        var url = form.attr("action");
+        $("#data").html("Loading...");
+        $.post(url, form.serialize(), function(data) {
+          $("#data").html(html);
+          Tempo.prepare("data").render(data);
+          //$("#data").html(html);
+        });
+        */
+        return false;
+      });		  
+	  }
+  })(jQuery);  
+  </script>
+</wicket:head>
+<wicket:panel>
+  <form action="api/processStat" method="POST">
+    <fieldset>
+      <legend>Process JsRater</legend>
+      <!-- 
+      http://static.jquery.com/files/rocker/scripts/custom.js
+      http://code.jquery.com/jquery-1.5.1.js
+       -->
+      <input type="text" name="code_url" size="40" value="http://static.jquery.com/files/rocker/scripts/custom.js"/>
+      <input type="submit"/>
+    </fieldset>
+  </form>
+  
+  <ul id="jsRates">
+  </ul>
+
+  <div id="template">
+  </div>
+  
+  <div id="chart-container" style="width: 100%; height: 400px"></div>
+  
+  <div id="data">
+	  <ul data-template style="display:none;">
+	    <li>Status: {{statusCode}}</li>
+	    <li>Input size: {{inputSize}} bytes</li>
+	    <li>Output size: {{outputSize}} bytes</li>
+	    <li>Retrieve time: {{retrieveTime}} ms</li>
+	    <li>Process time: {{processTime}} ms</li>
+	  </ul>
+	</div>
+</wicket:panel>

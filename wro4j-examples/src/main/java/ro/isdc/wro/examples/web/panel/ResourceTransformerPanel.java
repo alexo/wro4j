@@ -2,7 +2,7 @@
  * Copyright (C) 2010.
  * All rights reserved.
  */
-package ro.isdc.wro.examples.panel;
+package ro.isdc.wro.examples.web.panel;
 
 import java.io.File;
 import java.io.IOException;

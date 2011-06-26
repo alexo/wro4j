@@ -1,4 +1,4 @@
-package ro.isdc.wro.examples.util;
+package ro.isdc.wro.examples.web.util;
 
 import java.util.Map;
 
