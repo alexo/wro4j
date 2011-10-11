@@ -8,6 +8,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.mozilla.javascript.Context;
@@ -30,7 +35,7 @@ public class RhinoScriptBuilder {
   private Context context;
   private ScriptableObject scope;
 
-  private RhinoScriptBuilder() {
+  private RhinoScriptBuilder( ) {
     this(null);
   }
 
@@ -38,6 +43,15 @@ public class RhinoScriptBuilder {
     this.scope = createContext(scope);
   }
 
+  public static void main(final String[] args) throws Exception {
+    final ScriptEngineManager engineManager = new ScriptEngineManager();
+    final ScriptEngine scriptEngine = engineManager.getEngineByName("js");
+
+    final Compilable c = (Compilable) scriptEngine;
+    final CompiledScript script = c.compile("print('Hello World')");    //compile
+
+    script.eval();
+  }
 
   /**
    * @return the context
