@@ -12,16 +12,18 @@ import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.ToolErrorReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ro.isdc.wro.WroRuntimeException;
 
 
 /**
@@ -35,16 +37,28 @@ public class RhinoScriptBuilder {
   private Context context;
   private ScriptableObject scope;
 
-  private RhinoScriptBuilder( ) {
+  final ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("jav8");
+  final Compilable compilable = (Compilable) scriptEngine;
+
+  final StringBuffer sb = new StringBuffer();
+
+  private RhinoScriptBuilder() {
     this(null);
   }
 
   private RhinoScriptBuilder(final ScriptableObject scope) {
-    this.scope = createContext(scope);
+    //this.scope = createContext(scope);
+    try {
+      final InputStream script = getClass().getResourceAsStream("commons.js");
+      sb.append(IOUtils.toString(script));
+    } catch (final IOException e) {
+      throw new WroRuntimeException("", e);
+    }
   }
 
   public static void main(final String[] args) throws Exception {
     final ScriptEngineManager engineManager = new ScriptEngineManager();
+    System.out.println(engineManager.getEngineFactories());
     final ScriptEngine scriptEngine = engineManager.getEngineByName("js");
 
     final Compilable c = (Compilable) scriptEngine;
@@ -74,8 +88,12 @@ public class RhinoScriptBuilder {
     final ScriptableObject scope = (ScriptableObject) context.initStandardObjects(initialScope);
     try {
       script = getClass().getResourceAsStream("commons.js");
-      context.evaluateReader(scope, new InputStreamReader(script), "common.js", 1, null);
-    } catch (final IOException e) {
+
+      compilable.compile(new InputStreamReader(script));
+
+      //context.evaluateReader(scope, new InputStreamReader(script), "common.js", 1, null);
+    //} catch (final IOException e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Problem while evaluationg commons script.", e);
     } finally {
       IOUtils.closeQuietly(script);
@@ -92,9 +110,12 @@ public class RhinoScriptBuilder {
    */
   public RhinoScriptBuilder addClientSideEnvironment() {
     try {
-      final String SCRIPT_ENV = "env.rhino.min.js";
+      final String SCRIPT_ENV = "env.rhino-1.2.js";
       final InputStream script = getClass().getResourceAsStream(SCRIPT_ENV);
-      evaluate(script, SCRIPT_ENV);
+
+      sb.append(IOUtils.toString(script));
+
+      //evaluate(script, SCRIPT_ENV);
       return this;
     } catch (final IOException e) {
       throw new RuntimeException("Couldn't initialize env.rhino script", e);
@@ -106,7 +127,10 @@ public class RhinoScriptBuilder {
     try {
       final String SCRIPT_ENV = "json2.min.js";
       final InputStream script = getClass().getResourceAsStream(SCRIPT_ENV);
-      evaluate(script, SCRIPT_ENV);
+
+      sb.append(IOUtils.toString(script));
+
+//      evaluate(script, SCRIPT_ENV);
       return this;
     } catch (final IOException e) {
       throw new RuntimeException("Couldn't initialize json2.min.js script", e);
@@ -126,7 +150,8 @@ public class RhinoScriptBuilder {
     throws IOException {
     Validate.notNull(stream);
     try {
-      context.evaluateReader(scope, new InputStreamReader(stream), sourceName, 1, null);
+      sb.append(IOUtils.toString(stream));
+      //context.evaluateReader(scope, new InputStreamReader(stream), sourceName, 1, null);
       return this;
     } finally {
       stream.close();
@@ -144,7 +169,8 @@ public class RhinoScriptBuilder {
    */
   public RhinoScriptBuilder evaluateChain(final String script, final String sourceName) {
     Validate.notNull(script);
-    context.evaluateString(scope, script, sourceName, 1, null);
+    sb.append(script);
+    //context.evaluateString(scope, script, sourceName, 1, null);
     return this;
   }
 
@@ -161,10 +187,12 @@ public class RhinoScriptBuilder {
     throws IOException {
     Validate.notNull(stream);
     try {
-      return context.evaluateReader(scope, new InputStreamReader(stream), sourceName, 1, null);
-    } catch (final JavaScriptException e) {
+      sb.append(IOUtils.toString(stream));
+      final CompiledScript script = compilable.compile(sb.toString());
+      return script.eval();
+    } catch (final ScriptException e) {
       LOG.error("JavaScriptException occured: " + e.getMessage());
-      throw e;
+      throw new WroRuntimeException("JavaScriptException occured", e);
     } finally {
       stream.close();
     }
@@ -183,10 +211,12 @@ public class RhinoScriptBuilder {
     throws IOException {
     Validate.notNull(reader);
     try {
-      return context.evaluateReader(scope, reader, sourceName, 1, null);
-    } catch (final JavaScriptException e) {
+      sb.append(IOUtils.toString(reader));
+      final CompiledScript script = compilable.compile(sb.toString());
+      return script.eval();
+    } catch (final ScriptException e) {
       LOG.error("JavaScriptException occured: " + e.getMessage());
-      throw e;
+      throw new WroRuntimeException("JavaScriptException occured", e);
     } finally {
       reader.close();
     }
@@ -204,10 +234,13 @@ public class RhinoScriptBuilder {
   public Object evaluate(final String script, final String sourceName) {
     Validate.notNull(script);
     try {
-      return context.evaluateString(scope, script, sourceName, 1, null);
-    } catch (final JavaScriptException e) {
+      sb.append(script);
+      //System.out.println("compile script: " + sb);
+      final CompiledScript compiledScript = compilable.compile(sb.toString());
+      return compiledScript.eval();
+    } catch (final ScriptException e) {
       LOG.error("JavaScriptException occured: " + e.getMessage());
-      throw e;
+      throw new WroRuntimeException("JavaScriptException occured", e);
     }
   }
 
