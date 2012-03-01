@@ -38,16 +38,18 @@ public class RhinoScriptBuilder {
   private ScriptableObject scope;
 
   final ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("jav8");
-  final Compilable compilable = (Compilable) scriptEngine;
+  final Compilable compilable = (Compilable)scriptEngine;
 
   final StringBuffer sb = new StringBuffer();
+
 
   private RhinoScriptBuilder() {
     this(null);
   }
 
+
   private RhinoScriptBuilder(final ScriptableObject scope) {
-    //this.scope = createContext(scope);
+    // this.scope = createContext(scope);
     try {
       final InputStream script = getClass().getResourceAsStream("commons.js");
       sb.append(IOUtils.toString(script));
@@ -56,16 +58,23 @@ public class RhinoScriptBuilder {
     }
   }
 
-  public static void main(final String[] args) throws Exception {
-    final ScriptEngineManager engineManager = new ScriptEngineManager();
-    System.out.println(engineManager.getEngineFactories());
-    final ScriptEngine scriptEngine = engineManager.getEngineByName("js");
 
-    final Compilable c = (Compilable) scriptEngine;
-    final CompiledScript script = c.compile("print('Hello World')");    //compile
-
-    script.eval();
+  public static void main(final String[] args)
+    throws Exception {
+    System.out.println("test");
+    final ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("jav8");
+//    System.out.println(scriptEngine);
+//
+//    final ScriptEngineManager engineManager = new ScriptEngineManager();
+//    System.out.println(engineManager.getEngineFactories());
+//    scriptEngine = engineManager.getEngineByName("js");
+//
+//    final Compilable c = (Compilable)scriptEngine;
+//    final CompiledScript script = c.compile("print('Hello World')"); // compile
+//
+//    script.eval();
   }
+
 
   /**
    * @return the context
@@ -73,6 +82,7 @@ public class RhinoScriptBuilder {
   public ScriptableObject getScope() {
     return this.scope;
   }
+
 
   /**
    * Initialize the context.
@@ -85,14 +95,14 @@ public class RhinoScriptBuilder {
     context.setErrorReporter(new ToolErrorReporter(false));
     context.setLanguageVersion(Context.VERSION_1_7);
     InputStream script = null;
-    final ScriptableObject scope = (ScriptableObject) context.initStandardObjects(initialScope);
+    final ScriptableObject scope = (ScriptableObject)context.initStandardObjects(initialScope);
     try {
       script = getClass().getResourceAsStream("commons.js");
 
       compilable.compile(new InputStreamReader(script));
 
-      //context.evaluateReader(scope, new InputStreamReader(script), "common.js", 1, null);
-    //} catch (final IOException e) {
+      // context.evaluateReader(scope, new InputStreamReader(script), "common.js", 1, null);
+      // } catch (final IOException e) {
     } catch (final Exception e) {
       throw new RuntimeException("Problem while evaluationg commons script.", e);
     } finally {
@@ -115,7 +125,7 @@ public class RhinoScriptBuilder {
 
       sb.append(IOUtils.toString(script));
 
-      //evaluate(script, SCRIPT_ENV);
+      // evaluate(script, SCRIPT_ENV);
       return this;
     } catch (final IOException e) {
       throw new RuntimeException("Couldn't initialize env.rhino script", e);
@@ -130,7 +140,7 @@ public class RhinoScriptBuilder {
 
       sb.append(IOUtils.toString(script));
 
-//      evaluate(script, SCRIPT_ENV);
+      // evaluate(script, SCRIPT_ENV);
       return this;
     } catch (final IOException e) {
       throw new RuntimeException("Couldn't initialize json2.min.js script", e);
@@ -151,7 +161,7 @@ public class RhinoScriptBuilder {
     Validate.notNull(stream);
     try {
       sb.append(IOUtils.toString(stream));
-      //context.evaluateReader(scope, new InputStreamReader(stream), sourceName, 1, null);
+      // context.evaluateReader(scope, new InputStreamReader(stream), sourceName, 1, null);
       return this;
     } finally {
       stream.close();
@@ -170,7 +180,7 @@ public class RhinoScriptBuilder {
   public RhinoScriptBuilder evaluateChain(final String script, final String sourceName) {
     Validate.notNull(script);
     sb.append(script);
-    //context.evaluateString(scope, script, sourceName, 1, null);
+    // context.evaluateString(scope, script, sourceName, 1, null);
     return this;
   }
 
@@ -235,7 +245,7 @@ public class RhinoScriptBuilder {
     Validate.notNull(script);
     try {
       sb.append(script);
-      //System.out.println("compile script: " + sb);
+      // System.out.println("compile script: " + sb);
       final CompiledScript compiledScript = compilable.compile(sb.toString());
       return compiledScript.eval();
     } catch (final ScriptException e) {
@@ -251,6 +261,7 @@ public class RhinoScriptBuilder {
   public static RhinoScriptBuilder newChain() {
     return new RhinoScriptBuilder();
   }
+
 
   public static RhinoScriptBuilder newChain(final ScriptableObject scope) {
     return new RhinoScriptBuilder(scope);
