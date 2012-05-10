@@ -40,7 +40,6 @@ public class TestYUIJsCompressorProcessor {
       processor);
   }
 
-
   @Test
   public void testMunge()
     throws IOException {
@@ -58,5 +57,14 @@ public class TestYUIJsCompressorProcessor {
     final ResourcePostProcessor processor = YUIJsCompressorProcessor.doMungeCompressor();
     final String resourceUri = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/invalid.js";
     WroTestUtils.compareProcessedResourceContents(resourceUri, resourceUri, processor);
+  }
+
+  @Test
+  public void testJson2()
+    throws IOException {
+    final ResourcePostProcessor processor = YUIJsCompressorProcessor.doMungeCompressor();
+    final String input = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/yui/broken/json2.js";
+    final String expected = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/yui/broken/json2-145.js";
+    WroTestUtils.compareProcessedResourceContents(input, expected, processor);
   }
 }
