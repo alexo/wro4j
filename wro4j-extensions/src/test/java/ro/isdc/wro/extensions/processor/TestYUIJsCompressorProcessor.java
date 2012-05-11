@@ -67,4 +67,13 @@ public class TestYUIJsCompressorProcessor {
     final String expected = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/yui/broken/json2-145.js";
     WroTestUtils.compareProcessedResourceContents(input, expected, processor);
   }
+
+  @Test
+  public void testMinimalBrokeness()
+    throws IOException {
+    final ResourcePostProcessor processor = YUIJsCompressorProcessor.doMungeCompressor();
+    final String input = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/yui/broken/minimal.js";
+    final String expected = "classpath:" + WroUtil.toPackageAsFolder(getClass()) + "/yui/broken/minimal-expected.js";
+    WroTestUtils.compareProcessedResourceContents(input, expected, processor);
+  }
 }
