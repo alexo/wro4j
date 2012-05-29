@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import ro.isdc.wro.WroRuntimeException;
 import ro.isdc.wro.cache.CacheEntry;
+import ro.isdc.wro.config.Context;
 import ro.isdc.wro.config.jmx.WroConfiguration;
 import ro.isdc.wro.manager.callback.LifecycleCallbackRegistry;
 import ro.isdc.wro.model.WroModel;
@@ -76,7 +77,12 @@ public class GroupsProcessor {
           throw new WroRuntimeException("No resources found in group: " + group.getName());
         }
       }
+      LOG.debug("Start preProcessing for key: {} and correlationId: {}", cacheKey, Context.getCorrelationId());
+      
       final String result = preProcessorExecutor.processAndMerge(filteredGroup.getResources(), cacheKey.isMinimize());
+      
+      LOG.debug("preProcessing ready for key: {} and correlationId: {}", cacheKey, Context.getCorrelationId());
+
       return doPostProcess(result, cacheKey);
     } catch (final IOException e) {
       throw new WroRuntimeException("Exception while merging resources", e);
