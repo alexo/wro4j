@@ -352,7 +352,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>   
-        <module>wro4j-core</module>          
+        <module>wro4j-core</module>
+	<module>wro4j-amd</module>          
         <module>wro4j-extensions</module>
         <module>wro4j-maven-plugin</module>
         <module>wro4j-runner</module>           
@@ -364,7 +365,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>   
-        <module>wro4j-core</module>          
+        <module>wro4j-core</module>         
+	<module>wro4j-amd</module>          
         <module>wro4j-extensions</module>
         <module>wro4j-maven-plugin</module>
         <module>wro4j-runner</module>           
@@ -377,7 +379,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>   
-        <module>wro4j-core</module>          
+        <module>wro4j-core</module>         
+	<module>wro4j-amd</module>          
         <module>wro4j-extensions</module>
         <module>wro4j-maven-plugin</module>
       </modules>
@@ -394,6 +397,7 @@
       <!-- These modules will go to maven central repo -->
       <modules>
         <module>wro4j-core</module>    
+	<module>wro4j-amd</module>          
         <module>wro4j-extensions</module>
         <module>wro4j-maven-plugin</module>
       </modules>
