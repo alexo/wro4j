@@ -11,6 +11,9 @@
 	<artifactId>wro4j-extensions</artifactId>
 	<packaging>jar</packaging>
 	<name>wro4j extensions</name>
+	<properties>
+      <lescss.version>1.3.0</lescss.version>	    
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -82,6 +85,11 @@
 					<artifactId>gossip</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+		   <groupId>org.lesscss</groupId>
+		   <artifactId>lesscss</artifactId>
+		   <version>${lescss.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
