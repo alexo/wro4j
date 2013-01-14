@@ -346,6 +346,10 @@ public class WroFilter
   protected void onException(final Exception e, final HttpServletResponse response, final FilterChain chain) {
     final RuntimeException re = e instanceof RuntimeException ? (RuntimeException) e : new WroRuntimeException(
         e.getMessage(), e);
+    if (re instanceof WroRuntimeException) {
+      //TODO handle different type of exceptions. Not all should use ERROR level
+      LOG.error("Exception occured", e);
+    }
     onRuntimeException(re, response, chain);
   }
 
@@ -360,7 +364,6 @@ public class WroFilter
   @Deprecated
   protected void onRuntimeException(final RuntimeException e, final HttpServletResponse response,
       final FilterChain chain) {
-    LOG.debug("Exception occured", e);
     try {
       LOG.debug("Cannot process. Proceeding with chain execution.");
       chain.doFilter(Context.get().getRequest(), response);
