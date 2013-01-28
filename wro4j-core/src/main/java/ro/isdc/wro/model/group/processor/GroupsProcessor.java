@@ -84,7 +84,7 @@ public class GroupsProcessor {
       final String result = preProcessorExecutor.processAndMerge(filteredGroup.getResources(), cacheKey.isMinimize());
       return applyPostProcessors(cacheKey, result);
     } catch (final IOException e) {
-      throw new WroRuntimeException("Exception while merging resources: " + e.getMessage(), e).logError();
+      throw WroRuntimeException.wrap(e, "Exception while merging resources: " + e.getMessage()).logError();
     } finally {
       callbackRegistry.onProcessingComplete();
     }

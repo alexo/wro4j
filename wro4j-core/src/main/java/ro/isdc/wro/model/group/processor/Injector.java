@@ -76,8 +76,8 @@ public final class Injector {
         processInjectAnnotation(((ObjectDecorator<?>) object).getDecoratedObject());
       }
     } catch (final Exception e) {
-      LOG.error("Error while scanning @Inject annotation", e);
-      throw WroRuntimeException.wrap(e, "Exception while trying to process @Inject annotation on object: " + object);
+      throw WroRuntimeException.wrap(e, "Exception while trying to process @Inject annotation on object: " + object)
+          .logError();
     }
   }
 

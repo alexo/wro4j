@@ -41,23 +41,23 @@ public class WroRuntimeException extends RuntimeException {
    * Logs the error of this exception. By default errors are logged with DEBUG level. This method will use ERROR level.
    */
   public WroRuntimeException logError() {
-    LOG.error(getMessage());
+    LOG.error(getMessage(), getCause());
     return this;
   }
-  
+
   /**
    * Wraps original exception into {@link WroRuntimeException} and throw it.
-   * 
+   *
    * @param e
    *          the exception to wrap.
    */
   public static WroRuntimeException wrap(final Exception e) {
     return wrap(e, e.getMessage());
   }
-  
+
   /**
    * Wraps original exception into {@link WroRuntimeException} and throw it.
-   * 
+   *
    * @param e
    *          the exception to wrap.
    * @param message
