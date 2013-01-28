@@ -51,7 +51,6 @@ import ro.isdc.wro.http.handler.RequestHandler;
 import ro.isdc.wro.http.handler.factory.RequestHandlerFactory;
 import ro.isdc.wro.http.support.DelegatingServletOutputStream;
 import ro.isdc.wro.http.support.UnauthorizedRequestException;
-import ro.isdc.wro.manager.WroManager;
 import ro.isdc.wro.manager.factory.BaseWroManagerFactory;
 import ro.isdc.wro.manager.factory.DefaultWroManagerFactory;
 import ro.isdc.wro.manager.factory.WroManagerFactory;
@@ -713,15 +712,12 @@ public class TestWroFilter {
 
     prepareValidRequest(config);
 
-    final WroManager manager = ((AbstractDecorator<WroManagerFactory>) victim.getWroManagerFactory())
-        .getOriginalDecoratedObject().create();
-    final WroModelFactory proxyModelFactory = Mockito.spy(manager.getModelFactory());
-    // configure spied proxy for mocking
-    manager.setModelFactory(proxyModelFactory);
+    final WroModelFactory mockModelFactory = Mockito.spy(createValidModelFactory());
+    victim.setWroManagerFactory(new BaseWroManagerFactory().setModelFactory(mockModelFactory));
 
     victim.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-    verify(proxyModelFactory).destroy();
+    verify(mockModelFactory).destroy();
   }
 
   private void prepareValidRequest(final WroConfiguration config)
@@ -741,15 +737,12 @@ public class TestWroFilter {
 
     prepareValidRequest(config);
 
-    final WroManager manager = ((AbstractDecorator<WroManagerFactory>) victim.getWroManagerFactory())
-        .getOriginalDecoratedObject().create();
-    final WroModelFactory proxyModelFactory = Mockito.spy(manager.getModelFactory());
-    // configure spied proxy for mocking
-    manager.setModelFactory(proxyModelFactory);
+    final WroModelFactory mockModelFactory = Mockito.spy(createValidModelFactory());
+    victim.setWroManagerFactory(new BaseWroManagerFactory().setModelFactory(mockModelFactory));
 
     victim.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-    verify(proxyModelFactory, Mockito.never()).destroy();
+    verify(mockModelFactory, Mockito.never()).destroy();
   }
 
   @Test(expected = NullPointerException.class)

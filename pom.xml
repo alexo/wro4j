@@ -66,7 +66,7 @@
     <commons-lang.version>3.1</commons-lang.version>
     <commons-pool.version>1.6</commons-pool.version>
     <closure.version>r2388</closure.version>
-    <slf4j.version>1.7.1</slf4j.version>    
+    <slf4j.version>1.7.2</slf4j.version>    
     <maven.version>3.0.4</maven.version>    
     <mockito.version>1.9.5</mockito.version>
     <junit.version>4.10</junit.version>    
@@ -127,12 +127,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${slf4j.version}</version>        
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -207,7 +201,7 @@
       <dependency>
         <groupId>com.github.sommeri</groupId>
         <artifactId>less4j</artifactId>
-        <version>0.0.9</version>
+        <version>0.0.12</version>
       </dependency>
       <!-- Unit tests -->
       <dependency>
@@ -231,7 +225,7 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-log4j12</artifactId>        
     </dependency>
     <!-- For test -->
     <dependency>
