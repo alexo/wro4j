@@ -31,6 +31,7 @@ public final class RhinoScriptBuilder {
   private static final String SCRIPT_ENV = "env.rhino.min.js";
   private static final String SCRIPT_JSON = "json2.min.js";
   private static final String SCRIPT_CYCLE = "cycle.js";
+  private static final String SCRIPT_REQUIRE = "r.js";
   private final ScriptableObject scope;
 
   private RhinoScriptBuilder() {
@@ -113,6 +114,19 @@ public final class RhinoScriptBuilder {
     }
   }
 
+  /**
+   * Loads r.js utility (require.js rhino adapter). The client code is responsible for setting up the require baseUrl
+   * configuration.
+   */
+  public RhinoScriptBuilder addRequireJs() {
+    try {
+      final InputStream script = getClass().getResourceAsStream(SCRIPT_REQUIRE);
+      evaluateChain(script, SCRIPT_REQUIRE);
+      return this;
+    } catch (final IOException e) {
+      throw new RuntimeException("Couldn't initialize r.js script", e);
+    }
+  }
 
   /**
    * Evaluates a script and return {@link RhinoScriptBuilder} for a chained script evaluation.

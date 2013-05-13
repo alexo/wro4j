@@ -7,6 +7,7 @@ function print(message) {
 		org.slf4j.LoggerFactory.getLogger("Rhino").debug(message);
 	} catch(e) {}	
 }
+var arguments = [];
 // ecma-5.js
 //
 // -- kriskowal Kris Kowal Copyright (C) 2009-2010 MIT License

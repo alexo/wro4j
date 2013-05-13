@@ -5,6 +5,8 @@ package ro.isdc.wro.extensions.processor.support.linter;
 
 import java.io.InputStream;
 
+import ro.isdc.wro.extensions.script.RhinoScriptBuilder;
+
 
 /**
  * Apply JsHint script checking utility.
@@ -21,6 +23,14 @@ public class JsHint extends AbstractLinter {
    * The name of the jshint script to be used by default.
    */
   private static final String DEFAULT_JSHINT_JS = "jshint.min.js";
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected RhinoScriptBuilder createRhinoScriptBuilder() {
+    return super.createRhinoScriptBuilder().addRequireJs();
+  }
 
   /**
    * @return the stream of the jshint script. Override this method to provide a different script version.
