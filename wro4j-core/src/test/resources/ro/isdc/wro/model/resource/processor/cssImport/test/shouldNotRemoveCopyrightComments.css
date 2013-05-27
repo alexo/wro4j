@@ -1,0 +1,11 @@
+/*!
+* This is a copyright comment.
+*/
+/* @import "file1.css" */
+body {
+  font-family: Verdana;
+  /* @import "file2.css" */
+}
+/* 
+@import "file3.css" 
+*/
