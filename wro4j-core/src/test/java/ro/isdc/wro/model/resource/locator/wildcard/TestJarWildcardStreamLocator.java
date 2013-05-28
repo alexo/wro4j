@@ -1,6 +1,7 @@
 package ro.isdc.wro.model.resource.locator.wildcard;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -38,28 +39,17 @@ import ro.isdc.wro.model.resource.locator.UriLocator;
  */
 public class TestJarWildcardStreamLocator {
   private static final Logger LOG = LoggerFactory.getLogger(TestJarWildcardStreamLocator.class);
-
-  private static final String SEP = File.separator;
-
   private JarWildcardStreamLocator jarStreamLocator;
-
   private final String testInfo = "var foo = 'Hello World';";
-
   private final String jarFileName = "file:///home/test/myJar.jar!";
   @Mock
   private JarFile jarFile;
 
-
-  public TestJarWildcardStreamLocator() {
-    MockitoAnnotations.initMocks(this);
-  }
-
-
   @Before
   public void setUp()
     throws IOException {
+    MockitoAnnotations.initMocks(this);
     final Vector<JarEntry> vector = new Vector<JarEntry>();
-
     vector.add(new JarEntry("com/test/app/test-resource.js"));
 
     when(jarFile.entries()).thenReturn(vector.elements());
@@ -86,6 +76,7 @@ public class TestJarWildcardStreamLocator {
     final InputStream is = jarStreamLocator.locateStream("com/test/app/*.js", new File(jarFileName));
     final List<String> lines = IOUtils.readLines(is);
     LOG.debug("lines: " + lines);
+    assertFalse(lines.isEmpty());
     assertEquals(testInfo, lines.get(0));
 
     IOUtils.closeQuietly(is);
@@ -155,9 +146,11 @@ public class TestJarWildcardStreamLocator {
   private UriLocator createJarLocator(final ThreadLocal<Collection<String>> filenameListHolder) {
     final JarWildcardStreamLocator jarStreamLocator = new JarWildcardStreamLocator() {
       @Override
-      File getJarFile(final File folder) {
+      List<File> getJarFiles(final File folder) {
         //Use a jar from test resources
-        return new File(TestJarWildcardStreamLocator.class.getResource("resources.jar").getFile());
+        final List<File> jarFiles = new ArrayList<File>();
+        jarFiles.add(new File(TestJarWildcardStreamLocator.class.getResource("resources.jar").getFile()));
+        return jarFiles;
       }
       @Override
       void triggerWildcardExpander(final Collection<File> allFiles, final WildcardContext wildcardContext)
@@ -180,7 +173,8 @@ public class TestJarWildcardStreamLocator {
 
   @Test
   public void shouldGetJarFileFromFile() {
-    final String actual = jarStreamLocator.getJarFile(new File("file:path/to/file!one/two/three.class")).getPath();
+    final String actual = jarStreamLocator.getJarFiles(new File("file:path/to/file!one/two/three.class")).iterator()
+        .next().getPath();
     final String expected = FilenameUtils.separatorsToSystem("path/to/file");
     Assert.assertEquals(expected, actual);
   }
