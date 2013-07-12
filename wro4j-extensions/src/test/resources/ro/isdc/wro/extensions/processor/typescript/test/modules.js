@@ -1,7 +1,7 @@
 module Sayings {
     export class Greeter {
         greeting: string;
-        constructor (message: string) {
+        constructor(message: string) {
             this.greeting = message;
         }
         greet() {
@@ -11,10 +11,10 @@ module Sayings {
 }
 var greeter = new Sayings.Greeter("world");
 
-var button = document.createElement('button')
-button.innerText = "Say Hello"
+var button = document.createElement('button');
+button.innerText = "Say Hello";
 button.onclick = function() {
-	alert(greeter.greet())
-}
+    alert(greeter.greet());
+};
 
-document.body.appendChild(button)
+document.body.appendChild(button);

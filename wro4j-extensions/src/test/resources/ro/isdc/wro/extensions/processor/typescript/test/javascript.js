@@ -1,19 +1,17 @@
-function Greeter(greeting) {
-	this.greeting = greeting;
+function Greeter(greeting: string) {
+    this.greeting = greeting;
 }
 
 Greeter.prototype.greet = function() {
-	return "Hello, " + this.greeting;
+    return "Hello, " + this.greeting;
 }
 
+var greeter = new Greeter("world");
 
-
-var greeter = new Greeter({message: "world"});
-
-var button = document.createElement('button')
-button.innerText = "Say Hello"
+var button = document.createElement('button');
+button.innerText = "Say Hello";
 button.onclick = function() {
-	alert(greeter.greet())
-}
+    alert(greeter.greet());
+};
 
-document.body.appendChild(button)
+document.body.appendChild(button);

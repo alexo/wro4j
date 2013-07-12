@@ -1,6 +1,6 @@
 class Vector {
 
-    constructor (public x: number, public y: number, public z: number) { }
+    constructor(public x: number, public y: number, public z: number) { }
 
     static times(k: number, v: Vector) {
         return new Vector(k * v.x, k * v.y, k * v.z);
@@ -38,7 +38,7 @@ class Vector {
 
 class Color {
 
-    constructor (public r: number, public g: number, public b: number) { }
+    constructor(public r: number, public g: number, public b: number) { }
 
     static scale(k: number, v: Color) {
         return new Color(k * v.r, k * v.g, k * v.b);
@@ -70,12 +70,12 @@ class Color {
 }
 
 class Camera {
-    
+
     forward: Vector;
     right: Vector;
     up: Vector;
 
-    constructor (public pos: Vector, lookAt: Vector) {
+    constructor(public pos: Vector, lookAt: Vector) {
         var down = new Vector(0.0, -1.0, 0.0);
         this.forward = Vector.norm(Vector.minus(lookAt, this.pos));
         this.right = Vector.times(1.5, Vector.norm(Vector.cross(this.forward, down)));
@@ -123,13 +123,13 @@ class Sphere implements Thing {
 
     radius2: number;
 
-    constructor (public center: Vector, radius: number, public surface: Surface) {
+    constructor(public center: Vector, radius: number, public surface: Surface) {
         this.radius2 = radius * radius;
     }
 
     normal(pos: Vector): Vector {
         return Vector.norm(Vector.minus(pos, this.center));
-    };
+    }
 
     intersect(ray: Ray) {
         var eo = Vector.minus(this.center, ray.start);
@@ -152,12 +152,12 @@ class Sphere implements Thing {
 
 class Plane implements Thing {
 
-    normal: (pos: Vector) =>Vector;
-    intersect: (ray: Ray) =>Intersection;
+    normal: (pos: Vector) => Vector;
+    intersect: (ray: Ray) => Intersection;
 
-    constructor (norm: Vector, offset: number, public surface: Surface) {
-        this.normal = function (pos: Vector) { return norm; }
-        this.intersect = function (ray: Ray): Intersection {
+    constructor(norm: Vector, offset: number, public surface: Surface) {
+        this.normal = function(pos: Vector) { return norm; }
+        this.intersect = function(ray: Ray): Intersection {
             var denom = Vector.dot(norm, ray.dir);
             if (denom > 0) {
                 return null;
@@ -173,22 +173,22 @@ class Plane implements Thing {
 module Surfaces {
 
     export var shiny: Surface = {
-        diffuse: function (pos) { return Color.white; },
-        specular: function (pos) { return Color.grey; },
-        reflect: function (pos) { return 0.7; },
+        diffuse: function(pos) { return Color.white; },
+        specular: function(pos) { return Color.grey; },
+        reflect: function(pos) { return 0.7; },
         roughness: 250
     }
 
     export var checkerboard: Surface = {
-        diffuse: function (pos) {
+        diffuse: function(pos) {
             if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
                 return Color.white;
             } else {
                 return Color.black;
             }
         },
-        specular: function (pos) { return Color.white; },
-        reflect: function (pos) {
+        specular: function(pos) { return Color.white; },
+        reflect: function(pos) {
             if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
                 return 0.1;
             } else {
@@ -275,7 +275,7 @@ class RayTracer {
 
     render(scene, ctx, screenWidth, screenHeight) {
         var getPoint = (x, y, camera) => {
-            var recenterX = x =>(x - (screenWidth / 2.0)) / 2.0 / screenWidth;
+            var recenterX = x => (x - (screenWidth / 2.0)) / 2.0 / screenWidth;
             var recenterY = y => -(y - (screenHeight / 2.0)) / 2.0 / screenHeight;
             return Vector.norm(Vector.plus(camera.forward, Vector.plus(Vector.times(recenterX(x), camera.right), Vector.times(recenterY(y), camera.up))));
         }
@@ -306,7 +306,7 @@ function defaultScene(): Scene {
 }
 
 function exec() {
-    var canv = <HTMLCanvasElement>document.createElement("canvas");
+    var canv = document.createElement("canvas");
     canv.width = 256;
     canv.height = 256;
     document.body.appendChild(canv);
