@@ -30,7 +30,7 @@ public class ResponseHeadersConfigurer {
   /**
    * Default value used by Cache-control header.
    */
-  private static final String DEFAULT_CACHE_CONTROL_VALUE = "public, max-age=315360000";
+  private static final String CACHE_CONTROL_PUBLIC = "public";
   /**
    * String representation of headers to set. Each header is separated by a | character.
    */
@@ -87,12 +87,9 @@ public class ResponseHeadersConfigurer {
           addNoCacheHeaders(map);
         } else {
           final Calendar cal = Calendar.getInstance();
-          cal.roll(Calendar.YEAR, 1);
-          map.put(HttpHeader.CACHE_CONTROL.toString(), DEFAULT_CACHE_CONTROL_VALUE);
+          cal.add(Calendar.YEAR, -1);
           map.put(HttpHeader.EXPIRES.toString(), WroUtil.toDateAsString(cal.getTimeInMillis()));
-          // TODO probably this is not a good idea to set this field which will have a different value when there will be
-          // more than one instance of wro4j.
-          map.put(HttpHeader.LAST_MODIFIED.toString(), WroUtil.toDateAsString(getLastModifiedTimestamp()));
+          map.put(HttpHeader.CACHE_CONTROL.toString(), CACHE_CONTROL_PUBLIC);
         }
       };
     };
