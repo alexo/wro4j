@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.commons.io.output.NullWriter;
 
@@ -47,6 +49,22 @@ public class JsHintMojo
    * @optional
    */
   private String reportFormat = FormatterType.JSLINT.getFormat();
+  /**
+   * Allows mixed tabs and whitespace without reporting them
+   * 
+   * @parameter expression=${messy}
+   * @optional
+   */
+  private boolean messy = false;
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void onBeforeExecute() {
+	  getLog().info("messy: " + messy);
+	  super.onBeforeExecute();
+  }
 
   /**
    * {@inheritDoc}
@@ -69,18 +87,41 @@ public class JsHintMojo
 
       @Override
       protected void onLinterException(final LinterException e, final Resource resource) {
-        final String errorMessage = String.format("%s errors found while processing resource: %s. Errors are: %s", e
-            .getErrors().size(), resource, e.getErrors());
-        getProgressIndicator().addFoundErrors(e.getErrors().size());
-        getLog().error(errorMessage);
-        // collect found errors
-        addReport(ResourceLintReport.create(resource.getUri(), e.getErrors()));
-        if (isFailAllowed()) {
-          throw new WroRuntimeException("Errors found when validating resource: " + resource);
+    	  Collection<LinterError> errors;
+      	if (messy) {
+      		errors = removeMixedWhitespaceErrors(e);
+      	} else {
+      		errors = e.getErrors();
+      	}
+      	
+      	if (errors.size()> 0) {
+	        final String errorMessage = String.format("%s errors found while processing resource: %s. Errors are: %s", e
+	            .getErrors().size(), resource, errors);
+	        getProgressIndicator().addFoundErrors(errors.size());
+	        getLog().error(errorMessage);
+	        // collect found errors
+	        addReport(ResourceLintReport.create(resource.getUri(), errors));
+	        if (isFailAllowed()) {
+	          throw new WroRuntimeException("Errors found when validating resource: " + resource);
         }
+      	}
       };
     }.setOptionsAsString(getOptions());
     return processor;
+  }
+  
+  private Collection<LinterError> removeMixedWhitespaceErrors(LinterException e) {
+	  Collection<LinterError> errors = e.getErrors();
+	  Iterator<LinterError> i = errors.iterator();
+	  
+	  while (i.hasNext()) {
+		  LinterError err = i.next();
+		  if (err.getReason().equals("Mixed spaces and tabs.")) {
+			  i.remove();
+		  }
+	  }
+	  
+	  return errors;
   }
 
   /**
