@@ -99,6 +99,13 @@ public class WroModelInspector {
     return collectResources(new ArrayList<Resource>());
   }
 
+  /**
+   * @return true if the model doesn't have any resources.
+   */
+  public boolean isEmpty() {
+    return getAllResources().isEmpty();
+  }
+
   private Collection<Resource> collectResources(final Collection<Resource> resources) {
     for (final Group group : map.values()) {
       resources.addAll(group.getResources());

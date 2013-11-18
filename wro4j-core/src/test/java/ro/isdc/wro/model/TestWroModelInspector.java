@@ -48,8 +48,9 @@ public class TestWroModelInspector {
     new WroModelInspector(null);
   }
 
-  public void test() {
-    victim.getAllUniqueResources();
+  @Test
+  public void shouldReturnUniqueResources() {
+    assertEquals(3, victim.getAllUniqueResources().size());
   }
 
   @Test
@@ -109,9 +110,22 @@ public class TestWroModelInspector {
   }
 
   @Test
-  public void testHasGroup() {
+  public void shouldIdentifyGroupExistence() {
     assertFalse(victim.hasGroup("NOT_EXIST"));
     assertTrue(victim.hasGroup("g1"));
   }
 
+  @Test
+  public void shouldBeEmptyWhenNoGroupsExist() {
+    final WroModel model = new WroModel();
+    victim = new WroModelInspector(model);
+    assertEquals(true, victim.isEmpty());
+  }
+
+  @Test
+  public void shouldBeEmptyWhenEmptyGroupsExist() {
+    final WroModel model = new WroModel.WroModelBuilder().addGroup(new Group("group")).build();
+    victim = new WroModelInspector(model);
+    assertEquals(true, victim.isEmpty());
+  }
 }

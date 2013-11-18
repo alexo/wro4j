@@ -3,6 +3,8 @@
  */
 package ro.isdc.wro.model;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import ro.isdc.wro.WroRuntimeException;
 import ro.isdc.wro.model.group.Group;
 import ro.isdc.wro.model.group.InvalidGroupNameException;
-import ro.isdc.wro.model.resource.Resource;
+
 
 /**
  * The resource model encapsulates the information about all existing groups.
@@ -36,6 +38,34 @@ public final class WroModel {
    */
   private Set<Group> groups = new HashSet<Group>();
 
+  public static class WroModelBuilder {
+    private Collection<Group> groups = new HashSet<Group>();
+
+    public WroModelBuilder() {
+    }
+
+    public WroModelBuilder(final WroModel model) {
+      notNull(model);
+      groups = model.getGroups();
+    }
+
+    public WroModelBuilder addGroup(final Group group) {
+      groups.add(group);
+      return this;
+    }
+
+    public WroModel build() {
+      return new WroModel(this);
+    }
+  }
+
+  public WroModel() {
+  }
+
+  private WroModel(final WroModelBuilder builder) {
+    setGroups(builder.groups);
+  }
+
   /**
    * @return a readonly collection of groups.
    */
@@ -46,7 +76,9 @@ public final class WroModel {
   /**
    * @param groups
    *          the groups to set
+   * @deprecated ise {@link WroModelBuilder}
    */
+  @Deprecated
   public final WroModel setGroups(final Collection<Group> groups) {
     Validate.notNull(groups, "groups cannot be null!");
     LOG.debug("setGroups: {}", groups);
@@ -56,21 +88,10 @@ public final class WroModel {
   }
 
   /**
-   * @param resource
-   *          the {@link Resource} to search in all available groups.
-   * @return t collection of group names containing provided resource. If the resource is not availalbe, an empty
-   *         collection will be returned.
-   * @deprecated use {@link WroModelInspector#getGroupNamesContainingResource(String)}
-   */
-  @Deprecated
-  public Collection<String> getGroupNamesContainingResource(final String resourceUri) {
-    return new WroModelInspector(this).getGroupNamesContainingResource(resourceUri);
-  }
-
-  /**
    * Identify duplicate group names.
    *
-   * @param groups a collection of group to validate.
+   * @param groups
+   *          a collection of group to validate.
    */
   private void identifyDuplicateGroupNames(final Collection<Group> groups) {
     LOG.debug("identifyDuplicateGroupNames");
@@ -96,33 +117,41 @@ public final class WroModel {
     final WroModelInspector modelInspector = new WroModelInspector(this);
     final Group group = modelInspector.getGroupByName(name);
     if (group == null) {
-      throw new InvalidGroupNameException(String.format("There is no such group: '%s'. Available groups are: [%s]", name,
-          modelInspector.getGroupNamesAsString()));
+      throw new InvalidGroupNameException(String.format("There is no such group: '%s'. Available groups are: [%s]",
+          name, modelInspector.getGroupNamesAsString()));
     }
     return group;
   }
 
-/**
+  /**
    * Merge this model with another model. This is useful for supporting model imports.
    *
-   * @param importedModel model to import.
+   * @param importedModel
+   *          model to import.
+   * @return a new instance of {@link WroModel} containing merge result
    */
-  public void merge(final WroModel importedModel) {
+  public WroModel merge(final WroModel importedModel) {
     Validate.notNull(importedModel, "imported model cannot be null!");
     LOG.debug("merging importedModel: {}", importedModel);
+    final WroModelBuilder builder = new WroModelBuilder(this);
     for (final String groupName : new WroModelInspector(importedModel).getGroupNames()) {
       if (new WroModelInspector(this).getGroupNames().contains(groupName)) {
         throw new WroRuntimeException("Duplicate group name detected: " + groupName);
       }
       final Group importedGroup = new WroModelInspector(importedModel).getGroupByName(groupName);
-      addGroup(importedGroup);
+      builder.addGroup(importedGroup);
     }
+    return builder.build();
   }
 
   /**
    * Add a single group to the model.
-   * @param group a not null {@link Group}.
+   *
+   * @param group
+   *          a not null {@link Group}.
+   * @deprecated use {@link WroModelBuilder}
    */
+  @Deprecated
   public WroModel addGroup(final Group group) {
     Validate.notNull(group);
     groups.add(group);
@@ -150,7 +179,6 @@ public final class WroModel {
    */
   @Override
   public String toString() {
-    return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(
-        "groups", this.groups).toString();
+    return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("groups", this.groups).toString();
   }
 }

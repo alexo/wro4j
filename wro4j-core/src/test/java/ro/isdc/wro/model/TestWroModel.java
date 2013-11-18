@@ -99,4 +99,37 @@ public class TestWroModel {
     victim.merge(new WroModel().addGroup(new Group("anEmptyGroup")));
     assertEquals(Arrays.asList("anEmptyGroup", "g1", "g2", "g3"), new WroModelInspector(victim).getGroupNames());
   }
+
+  @Test(expected = NullPointerException.class)
+  public void cannotCreateWroModelBuilderUsingNullModel() {
+    new WroModel.WroModelBuilder(null);
+  }
+
+  @Test
+  public void shouldBuildEmptyModelByDefault() {
+    final WroModel model = new WroModel.WroModelBuilder().build();
+    final WroModelInspector modelInspector = new WroModelInspector(model);
+    assertEquals(true, modelInspector.isEmpty());
+  }
+
+  @Test
+  public void shouldBuildModelWithAGroup() {
+    final Group group = new Group("name").addResource(Resource.create("1.js"));
+    final WroModel model = new WroModel.WroModelBuilder().addGroup(group).build();
+    final WroModelInspector modelInspector = new WroModelInspector(model);
+    assertEquals(1, modelInspector.getAllResources().size());
+  }
+
+  @Test
+  public void shouldMergeModel() {
+    final Group group = new Group("name").addResource(Resource.create("1.js"));
+    final WroModel model = new WroModel.WroModelBuilder().addGroup(group).build();
+    final WroModelInspector modelInspector = new WroModelInspector(model);
+
+    final Group group2 = new Group("name").addResource(Resource.create("2.js"));
+    final WroModel modelToMerge = new WroModel.WroModelBuilder().addGroup(group2).build();
+
+    final WroModel mergedModel = model.merge(modelToMerge);
+    assertEquals(1, modelInspector.getAllResources().size());
+  }
 }
