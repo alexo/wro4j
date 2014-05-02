@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -40,15 +42,32 @@ public class WebjarUriLocator
   public static final String PREFIX = format("%s:", ALIAS);
   private final UriLocator classpathLocator = new ClasspathUriLocator();
   private final WebJarAssetLocator webjarAssetLocator = newWebJarAssetLocator();
-
+  private final List<ClassLoader> webJarClassLoaders = new LinkedList<ClassLoader>();
 
   /**
+   * Constructor, initializes with default current threads classLoader
+   */
+  public WebjarUriLocator() {
+    this.addClassLoader(Thread.currentThread().getContextClassLoader());
+  }
+
+
+    /**
    * @return an instance of {@link WebJarAssetLocator} to be used for identifying the fully qualified name of resources
    *         based on provided partial path.
    */
   private WebJarAssetLocator newWebJarAssetLocator() {
     return new WebJarAssetLocator(WebJarAssetLocator.getFullPathIndex(
-        Pattern.compile(".*"), Thread.currentThread().getContextClassLoader()));
+        Pattern.compile(".*"), webJarClassLoaders.toArray(new ClassLoader[webJarClassLoaders.size()])));
+  }
+
+  /**
+   * Adds a new instance of a {@link ClassLoader} that is used to find WebJars
+   * @param cl the classLoader to add
+   */
+  public WebjarUriLocator addClassLoader(ClassLoader cl) {
+      webJarClassLoaders.add(cl);
+      return this;
   }
 
   /**
