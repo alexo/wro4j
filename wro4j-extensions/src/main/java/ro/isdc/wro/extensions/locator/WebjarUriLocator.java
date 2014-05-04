@@ -41,7 +41,7 @@ public class WebjarUriLocator
     public static final String PREFIX = format("%s:", ALIAS);
     private final UriLocator classpathLocator = new ClasspathUriLocator();
     private final List<ClassLoader> webJarClassLoaders = new LinkedList<ClassLoader>();
-    private WebJarAssetLocator webjarAssetLocator = null;
+    private WebJarAssetLocator webjarAssetLocator;
 
     /**
      * Constructor, initializes with default current threads classLoader
