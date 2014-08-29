@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,12 @@ public class BuildContextHolder {
     this.buildContext = buildContext;
     this.buildDirectory = buildDirectory == null ? FileUtils.getTempDirectory() : buildDirectory;
 
-    try {
-      initFallbackStorage();
-    } catch (final IOException e) {
-      LOG.warn("Cannot use fallback storage. No build context storage will be used.", e);
+    if (this.buildContext == null) {
+      try {
+        initFallbackStorage();
+      } catch (final IOException e) {
+        LOG.warn("Cannot use fallback storage. No build context storage will be used.", e);
+      }
     }
   }
 
@@ -90,8 +93,7 @@ public class BuildContextHolder {
     if (key != null) {
       if (buildContext != null) {
         value = (String) buildContext.getValue(key);
-      }
-      if (value == null) {
+      } else if (fallbackStorage != null) {
         value = fallbackStorage.getProperty(key);
       }
     }
@@ -109,21 +111,24 @@ public class BuildContextHolder {
     if (key != null) {
       if (buildContext != null) {
         buildContext.setValue(key, value);
-      }
-      // always use fallback
-      if (value != null) {
-        fallbackStorage.setProperty(key, value);
-      } else {
-        fallbackStorage.remove(key);
-      }
-      try {
-        // immediately persist
-        final OutputStream os = new FileOutputStream(getFallbackStorageFile());
-        fallbackStorage.store(os, "Generated");
-        os.close();
-        LOG.debug("fallback storage updated");
-      } catch (final IOException e) {
-        LOG.warn("Cannot store value: {}, because {}.", value, e.getMessage());
+      } else if (fallbackStorage != null) {
+        if (value != null) {
+          fallbackStorage.setProperty(key, value);
+        } else {
+          fallbackStorage.remove(key);
+        }
+        OutputStream os = null;
+        try {
+          // immediately persist
+          System.out.println("persist to: " + getFallbackStorageFile());
+          os = new FileOutputStream(getFallbackStorageFile());
+          fallbackStorage.store(os, "Generated");
+          LOG.debug("fallback storage updated");
+        } catch (final IOException e) {
+          LOG.warn("Cannot store value: {}, because {}.", value, e.getMessage());
+        } finally {
+          IOUtils.closeQuietly(os);
+        }
       }
     } else {
       LOG.debug("Cannot store null key");
