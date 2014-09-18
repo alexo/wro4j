@@ -3,6 +3,7 @@ package ro.isdc.wro.maven.plugin.support;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.After;
 import org.junit.Before;
@@ -53,12 +54,19 @@ public class TestResourceChangeHandler {
   }
 
   @Test(expected = NullPointerException.class)
-  public void cannotCheckNullResourceForChange() {
+  public void cannotCheckNullResourceForChange() throws MojoExecutionException {
     assertEquals(false, victim.isResourceChanged(null));
   }
 
   @Test
-  public void shouldConsiderInvalidResourceAsUnchanged() {
+  public void shouldConsiderInvalidResourceAsUnchanged() throws MojoExecutionException {
+    assertEquals(false, victim.isResourceChanged(Resource.create("/1.js")));
+  }
+  
+  @Test(expected = MojoExecutionException.class)
+  public void invalidResourceShouldBreakBuild() throws MojoExecutionException {
+	Context.set(Context.standaloneContext());
+	Context.get().getConfig().setIgnoreMissingResources(false);
     assertEquals(false, victim.isResourceChanged(Resource.create("/1.js")));
   }
 
@@ -70,7 +78,7 @@ public class TestResourceChangeHandler {
   }
 
   @Test
-  public void shouldIdentifyChangeAfterDestroyOrForgetIsInvoked() {
+  public void shouldIdentifyChangeAfterDestroyOrForgetIsInvoked() throws MojoExecutionException {
     final String resourceUri = ClasspathUriLocator.createUri(getClass().getName().replace(".", "/") + ".class");
     final Resource resource = Resource.create(resourceUri, ResourceType.JS);
     assertEquals(true, victim.isResourceChanged(resource));
