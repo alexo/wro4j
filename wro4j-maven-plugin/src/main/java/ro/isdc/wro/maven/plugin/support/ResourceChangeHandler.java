@@ -96,8 +96,8 @@ public class ResourceChangeHandler {
       return changeDetected.get();
     } catch (final IOException e) {
       if (Context.get().getConfig().isIgnoreMissingResources()) {
-    	log.error("failed to check for delta resource: " + resource, e);
-    	return false;
+        getLog().error("failed to check for delta resource: " + resource, e);
+        return false;
       } else {
         throw new MojoExecutionException("failed to check for delta resource: " + resource, e);
       }
