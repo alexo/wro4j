@@ -490,4 +490,8 @@ public class WroFilter
     }
     Context.destroy();
   }
+
+  public void setHeadersConfigurer(ResponseHeadersConfigurer headersConfigurer) {
+    this.headersConfigurer = headersConfigurer;
+  }
 }
