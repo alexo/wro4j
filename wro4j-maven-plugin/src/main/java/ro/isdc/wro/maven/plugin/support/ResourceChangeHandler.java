@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import ro.isdc.wro.config.Context;
 import ro.isdc.wro.manager.WroManager;
 import ro.isdc.wro.manager.factory.WroManagerFactory;
 import ro.isdc.wro.model.group.processor.InjectorBuilder;
@@ -70,7 +72,7 @@ public class ResourceChangeHandler {
   }
 
 
-  public boolean isResourceChanged(final Resource resource) {
+  public boolean isResourceChanged(final Resource resource) throws MojoExecutionException {
     notNull(resource, "Invalid resource provided");
 
     final WroManager manager = getManagerFactory().create();
@@ -93,9 +95,13 @@ public class ResourceChangeHandler {
       }
       return changeDetected.get();
     } catch (final IOException e) {
-      getLog().error("failed to check for delta resource: " + resource, e);
+      if (Context.get().getConfig().isIgnoreMissingResources()) {
+        getLog().error("failed to check for delta resource: " + resource, e);
+        return false;
+      } else {
+        throw new MojoExecutionException("failed to check for delta resource: " + resource, e);
+      }
     }
-    return false;
   }
 
   private void detectChangeForCssImports(final Resource resource, final Reader reader,
