@@ -58,7 +58,7 @@ class WroModelDelegate {
     def groupDelegate = new GroupDelegate()
     cl.delegate = groupDelegate
     cl()
-    wroModel = new WroModel(groups: (Collection<Group>) cl.resolveGroupResources())
+    this.wroModel = new WroModel(groups: (Collection<Group>) cl.resolveGroupResources())
   }
 
 }
