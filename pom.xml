@@ -59,7 +59,7 @@
     </developers>
     <properties>
         <wro4j.version>1.5.1-SNAPSHOT</wro4j.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-lang.version>3.1</commons-lang.version>
         <commons-pool.version>1.6</commons-pool.version>
         <closure.version>v20140814</closure.version>
